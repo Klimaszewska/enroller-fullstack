@@ -25,7 +25,8 @@ export default function MeetingsPage({username}) {
         });
 
         if (response.ok) {
-            const nextMeetings = [...meetings, meeting];
+            const savedMeeting = await response.json();
+            const nextMeetings = [...meetings, savedMeeting];
             setMeetings(nextMeetings);
             setAddingNewMeeting(false);
         }
