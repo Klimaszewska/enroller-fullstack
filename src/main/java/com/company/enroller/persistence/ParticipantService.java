@@ -6,6 +6,7 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Locale;
 
 @Component("participantService")
 public class ParticipantService {
@@ -15,19 +16,19 @@ public class ParticipantService {
     public ParticipantService() {
         connector = DatabaseConnector.getInstance();
     }
-
+    
     public Collection<Participant> getAll(String login, String sortMode, String sortOrder) {
-        String hql = "FROM Participant WHERE login LIKE :login";
+        StringBuilder hql = new StringBuilder("FROM Participant WHERE LOWER(login) LIKE :login");
 
-        if (sortMode.equals("login")) {
-            hql += " ORDER BY login";
-            if (sortOrder.equals("ASC") || sortOrder.equals("DESC")) {
-                hql += " " + sortOrder;
+        if ("login".equalsIgnoreCase(sortMode)) {
+            hql.append(" ORDER BY login");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                hql.append(" ").append(sortOrder.toUpperCase(Locale.ROOT));
             }
         }
 
-        Query query = connector.getSession().createQuery(hql);
-        query.setParameter("login", "%" + login + "%");
+        Query<Participant> query = connector.getSession().createQuery(hql.toString(), Participant.class);
+        query.setParameter("login", "%" + (login != null ? login.toLowerCase(Locale.ROOT) : "") + "%");
         return query.list();
     }
 
@@ -35,23 +36,42 @@ public class ParticipantService {
         return connector.getSession().get(Participant.class, login);
     }
 
+    /**
+     * Returns the saved participant (teacher's improvement) so callers
+     * can use the persisted object directly.
+     * Adds try/catch rollback from your version.
+     */
     public Participant add(Participant participant) {
         Transaction transaction = connector.getSession().beginTransaction();
-        connector.getSession().save(participant);
-        transaction.commit();
-        return participant;
+        try {
+            connector.getSession().save(participant);
+            transaction.commit();
+            return participant;
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
     }
 
     public void update(Participant participant) {
         Transaction transaction = connector.getSession().beginTransaction();
-        connector.getSession().merge(participant);
-        transaction.commit();
+        try {
+            connector.getSession().merge(participant);
+            transaction.commit();
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
     }
 
     public void delete(Participant participant) {
         Transaction transaction = connector.getSession().beginTransaction();
-        connector.getSession().delete(participant);
-        transaction.commit();
+        try {
+            connector.getSession().delete(participant);
+            transaction.commit();
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
     }
-
 }

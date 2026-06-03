@@ -5,6 +5,7 @@ import MeetingsList from "./MeetingsList";
 export default function MeetingsPage({username}) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
+    const [currentUser, setCurrentUser] = useState(false);
 
     useEffect(() => {
         const fetchMeetings = async () => {
@@ -16,6 +17,20 @@ export default function MeetingsPage({username}) {
         };
         fetchMeetings();
     }, []);
+
+    useEffect(() => {
+        const fetchCurrentUser = async () => {
+            const response = await fetch(`/api/participants?key=${username}`);
+            if (response.ok) {
+                const currentUser = await response.json();
+                setCurrentUser(currentUser);
+            }
+        };
+        fetchCurrentUser();
+        console.log("JKS: " + username);
+        console.log("JKS: " + currentUser);
+    }, []);
+
 
     async function handleNewMeeting(meeting) {
         const response = await fetch('/api/meetings', {
@@ -43,6 +58,18 @@ export default function MeetingsPage({username}) {
         }
     }
 
+    async function handleRegisterParticipant(id, participant) {
+/*        const response = await fetch(`/api/meetings/${id}`, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'},
+        });
+        if (response.ok) {
+            const nextMeetings = meetings.filter(m => m !== meeting);
+            setMeetings(nextMeetings);
+        }*/
+    }
+
+
     return (
         <div>
             <h2>Zajęcia ({meetings.length})</h2>
@@ -53,7 +80,9 @@ export default function MeetingsPage({username}) {
             }
             {meetings.length > 0 &&
                 <MeetingsList meetings={meetings} username={username}
-                              onDelete={handleDeleteMeeting}/>}
+                              onDelete={handleDeleteMeeting} onRegister={handleRegisterParticipant}
+                              participant={username}/>}
         </div>
     )
 }
+

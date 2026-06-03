@@ -1,6 +1,7 @@
 import "./MeetingsList.css";
 
-export default function MeetingsList({meetings, onDelete}) {
+// TODO: implement the above also on frontend (currently WIP)
+export default function MeetingsList({meetings, onDelete, onRegister, participant}) {
     return (
         <table>
             <thead>
@@ -19,7 +20,7 @@ export default function MeetingsList({meetings, onDelete}) {
                     <td>{meeting.description}</td>
                     <td>TODO</td>
                     <td>
-                        <button className="button-outline" onClick={() => onDelete(meeting)}>Enroll</button>
+                        <button className="button-outline" onClick={() => onRegister(meeting.id, participant)}>Enroll</button>
                     </td>
                     <td>
                         <button className="button-outline button-red" onClick={() => onDelete(meeting)}>Delete empty meeting</button>
