@@ -18,16 +18,21 @@ export default function MeetingsList({meetings, onDelete, onRegister, participan
                 meetings.map((meeting, index) => <tr key={index}>
                     <td>{meeting.title}</td>
                     <td>{meeting.description}</td>
-                    <td>TODO</td>
-                    <td>
-                        <button className="button-outline" onClick={() => onRegister(meeting.id, participant)}>Enroll</button>
+                    <td>{meeting.participants.map(p =>
+                        <div key={p.login}>{p.login}</div>)}
                     </td>
                     <td>
-                        <button className="button-outline button-red" onClick={() => onDelete(meeting)}>Delete empty meeting</button>
+                        <button className="button-outline" onClick={() => onRegister(meeting.id, participant)}>Enroll
+                        </button>
+                    </td>
+                    <td>
+                        <button className="button-outline button-red" onClick={() => onDelete(meeting)}>Delete empty
+                            meeting
+                        </button>
                     </td>
                 </tr>)
             }
             </tbody>
         </table>
-);
+    );
 }

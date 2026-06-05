@@ -8,13 +8,6 @@ export default function MeetingsPage({username}) {
     const [currentUser, setCurrentUser] = useState(false);
 
     useEffect(() => {
-        const fetchMeetings = async () => {
-            const response = await fetch(`/api/meetings`);
-            if (response.ok) {
-                const meetings = await response.json();
-                setMeetings(meetings);
-            }
-        };
         fetchMeetings();
     }, []);
 
@@ -31,6 +24,13 @@ export default function MeetingsPage({username}) {
         console.log("JKS: " + currentUser);
     }, []);
 
+    async function fetchMeetings() {
+        const response = await fetch(`/api/meetings`);
+        if (response.ok) {
+            const meetings = await response.json();
+            setMeetings(meetings);
+        }
+    }
 
     async function handleNewMeeting(meeting) {
         const response = await fetch('/api/meetings', {
@@ -58,15 +58,15 @@ export default function MeetingsPage({username}) {
         }
     }
 
-    async function handleRegisterParticipant(id, participant) {
-/*        const response = await fetch(`/api/meetings/${id}`, {
-            method: 'GET',
+    async function handleRegisterParticipant(id) {
+        const response = await fetch(`/api/meetings/${id}/participants`, {
+            method: 'POST',
             headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"login": username})
         });
         if (response.ok) {
-            const nextMeetings = meetings.filter(m => m !== meeting);
-            setMeetings(nextMeetings);
-        }*/
+            await fetchMeetings();
+        }
     }
 
 
