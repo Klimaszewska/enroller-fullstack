@@ -1,7 +1,8 @@
 import "./MeetingsList.css";
 
-// TODO: implement the above also on frontend (currently WIP)
-export default function MeetingsList({meetings, onDelete, onRegister, participant}) {
+export default function MeetingsList({meetings, onDelete, onEnroll, onUnenroll, participant}) {
+    console.log(participant)
+
     return (
         <table>
             <thead>
@@ -22,11 +23,15 @@ export default function MeetingsList({meetings, onDelete, onRegister, participan
                         <div key={p.login}>{p.login}</div>)}
                     </td>
                     <td>
-                        <button className="button-outline" onClick={() => onRegister(meeting.id, participant)}>Enroll
+                        <button className="button-outline" onClick={() => onEnroll(meeting.id, participant)}>Enroll
                         </button>
                     </td>
                     <td>
-                        <button className="button-outline button-red" onClick={() => onDelete(meeting)}>Delete empty
+                        <button className="button-outline button-red" disabled={!meeting.participants.some(p => p.login === participant)} onClick={() => onUnenroll(meeting.id, participant)}>Unenroll
+                        </button>
+                    </td>
+                    <td>
+                        <button className="button-outline button-red" disabled={meeting.participants.length > 0} onClick={() => onDelete(meeting)}>Delete empty
                             meeting
                         </button>
                     </td>

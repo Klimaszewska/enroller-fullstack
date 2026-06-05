@@ -58,11 +58,21 @@ export default function MeetingsPage({username}) {
         }
     }
 
-    async function handleRegisterParticipant(id) {
+    async function handleEnrollParticipant(id) {
         const response = await fetch(`/api/meetings/${id}/participants`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"login": username})
+        });
+        if (response.ok) {
+            await fetchMeetings();
+        }
+    }
+
+    async function handleUnenrollParticipant(id) {
+        const response = await fetch(`/api/meetings/${id}/participants/${username}`, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
         });
         if (response.ok) {
             await fetchMeetings();
@@ -80,7 +90,9 @@ export default function MeetingsPage({username}) {
             }
             {meetings.length > 0 &&
                 <MeetingsList meetings={meetings} username={username}
-                              onDelete={handleDeleteMeeting} onRegister={handleRegisterParticipant}
+                              onDelete={handleDeleteMeeting}
+                              onEnroll={handleEnrollParticipant}
+                              onUnenroll={handleUnenrollParticipant}
                               participant={username}/>}
         </div>
     )

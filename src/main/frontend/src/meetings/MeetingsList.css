@@ -2,3 +2,8 @@
     border-color: red;
     color: red !important;
 }
+
+button:disabled {
+    border-color: gray;
+    color: gray !important;
+}
