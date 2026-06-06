@@ -5,6 +5,7 @@ import com.company.enroller.persistence.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -15,6 +16,9 @@ public class ParticipantRestController {
 
 	@Autowired
 	ParticipantService participantService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<Collection<Participant>> getParticipants(
@@ -41,6 +45,8 @@ public class ParticipantRestController {
 					"Unable to create. A participant with login '" + participant.getLogin() + "' already exists.",
 					HttpStatus.CONFLICT);
 		}
+		String hashedPassword = passwordEncoder.encode(participant.getPassword());
+		participant.setPassword(hashedPassword);
 		Participant saved = participantService.add(participant);
 		return new ResponseEntity<>(saved, HttpStatus.CREATED);
 	}
@@ -52,7 +58,8 @@ public class ParticipantRestController {
 		if (participant == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		participant.setPassword(updatedParticipant.getPassword());
+		String hashedPassword = passwordEncoder.encode(updatedParticipant.getPassword());
+		participant.setPassword(hashedPassword);
 		participantService.update(participant);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
