@@ -60,6 +60,19 @@ export default function MeetingsPage({username, token}) {
         }
     }
 
+    async function handleEditMeeting(id, meeting) {
+        const response = await fetch(`/api/meetings/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+            body: JSON.stringify(meeting)
+        });
+        if (response.ok) {
+            await fetchMeetings();
+        } else {
+            showError('Failed to delete meeting');
+        }
+    }
+
     async function handleDeleteMeeting(meeting) {
         const response = await fetch(`/api/meetings/${meeting.id}`, {
             method: 'DELETE',
@@ -113,6 +126,7 @@ export default function MeetingsPage({username, token}) {
                               onDelete={handleDeleteMeeting}
                               onEnroll={handleEnrollParticipant}
                               onUnenroll={handleUnenrollParticipant}
+                              onEdit={handleEditMeeting}
                               participant={username}/>}
         </div>
     )
