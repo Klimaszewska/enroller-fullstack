@@ -3,6 +3,7 @@ import './App.css';
 import {useState} from "react";
 import LoginForm from "./LoginForm";
 import UserPanel from "./UserPanel";
+import {ToastContainer} from "react-toastify";
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(localStorage.getItem('login') || '');
@@ -27,6 +28,7 @@ function App() {
         <div>
             <h1>System do zapisów na zajęcia</h1>
             {loggedIn ? <UserPanel username={loggedIn} token={token} onLogout={logout}/> : <LoginForm onLogin={login}/>}
+            <ToastContainer/>
         </div>
     );
 }

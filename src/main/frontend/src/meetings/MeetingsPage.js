@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
 import NewMeetingForm from "./NewMeetingForm";
 import MeetingsList from "./MeetingsList";
+import {toast} from "react-toastify";
 
 export default function MeetingsPage({username, token}) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
     const [currentUser, setCurrentUser] = useState(false);
-    const [error, setError] = useState('');
 
     useEffect(() => {
         fetchMeetings();
@@ -26,11 +26,6 @@ export default function MeetingsPage({username, token}) {
         console.log("JKS: " + currentUser);
     }, []);
 
-    function showError(message) {
-        setError(message);
-        setTimeout(() => setError(''), 3000);
-    }
-
     async function fetchMeetings() {
         const response = await fetch(`/api/meetings`,
             {headers: {'Authorization': `Bearer ${token}`}});
@@ -38,7 +33,7 @@ export default function MeetingsPage({username, token}) {
             const meetings = await response.json();
             setMeetings(meetings);
         } else {
-            showError('Failed to get meetings');
+            toast.error('Failed to get meetings');
         }
     }
 
@@ -56,7 +51,7 @@ export default function MeetingsPage({username, token}) {
             setAddingNewMeeting(false);
         }
         else {
-            showError('Failed to add the meeting');
+            toast.error('Failed to add the meeting');
         }
     }
 
@@ -69,7 +64,7 @@ export default function MeetingsPage({username, token}) {
         if (response.ok) {
             await fetchMeetings();
         } else {
-            showError('Failed to delete meeting');
+            toast.error('Failed to edit meeting');
         }
     }
 
@@ -82,7 +77,7 @@ export default function MeetingsPage({username, token}) {
             const nextMeetings = meetings.filter(m => m !== meeting);
             setMeetings(nextMeetings);
         } else {
-            showError('Failed to delete meeting');
+            toast.error('Failed to delete meeting');
         }
     }
 
@@ -95,7 +90,7 @@ export default function MeetingsPage({username, token}) {
         if (response.ok) {
             await fetchMeetings();
         }  else {
-            showError('Failed to enroll');
+            toast.error('Failed to enroll');
         }
     }
 
@@ -107,14 +102,13 @@ export default function MeetingsPage({username, token}) {
         if (response.ok) {
             await fetchMeetings();
         }  else {
-            showError('Failed to unenroll');
+            toast.error('Failed to unenroll');
         }
     }
 
 
     return (
         <div>
-            {error && <p style={{color: 'red'}}>{error}</p>}
             <h2>Zajęcia ({meetings.length})</h2>
             {
                 addingNewMeeting
