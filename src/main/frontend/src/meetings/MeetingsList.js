@@ -8,6 +8,7 @@ export default function MeetingsList({meetings, onDelete, onEnroll, onUnenroll, 
             <thead>
             <tr>
                 <th>Meeting title</th>
+                <th>Date</th>
                 <th>Description</th>
                 <th>Participants</th>
                 <th></th>
@@ -18,6 +19,7 @@ export default function MeetingsList({meetings, onDelete, onEnroll, onUnenroll, 
             {
                 meetings.map((meeting, index) => <tr key={index}>
                     <td>{meeting.title}</td>
+                    <td>{meeting.date}</td>
                     <td>{meeting.description}</td>
                     <td>{meeting.participants.map(p =>
                         <div key={p.login}>{p.login}</div>)}
