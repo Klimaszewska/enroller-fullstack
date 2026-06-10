@@ -109,11 +109,11 @@ export default function MeetingsPage({username, token}) {
 
     return (
         <div>
-            <h2>Zajęcia ({meetings.length})</h2>
+            <h2>Meetings ({meetings.length})</h2>
             {
                 addingNewMeeting
                     ? <NewMeetingForm onSubmit={(meeting) => handleNewMeeting(meeting)}/>
-                    : <button onClick={() => setAddingNewMeeting(true)}>Dodaj nowe spotkanie</button>
+                    : <button onClick={() => setAddingNewMeeting(true)}>Add new meeting</button>
             }
             {meetings.length > 0 &&
                 <MeetingsList meetings={meetings} username={username}
