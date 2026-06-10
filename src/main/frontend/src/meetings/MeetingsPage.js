@@ -6,6 +6,7 @@ export default function MeetingsPage({username, token}) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
     const [currentUser, setCurrentUser] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         fetchMeetings();
@@ -25,12 +26,19 @@ export default function MeetingsPage({username, token}) {
         console.log("JKS: " + currentUser);
     }, []);
 
+    function showError(message) {
+        setError(message);
+        setTimeout(() => setError(''), 3000);
+    }
+
     async function fetchMeetings() {
         const response = await fetch(`/api/meetings`,
             {headers: {'Authorization': `Bearer ${token}`}});
         if (response.ok) {
             const meetings = await response.json();
             setMeetings(meetings);
+        } else {
+            showError('Failed to get meetings');
         }
     }
 
@@ -47,6 +55,9 @@ export default function MeetingsPage({username, token}) {
             setMeetings(nextMeetings);
             setAddingNewMeeting(false);
         }
+        else {
+            showError('Failed to add the meeting');
+        }
     }
 
     async function handleDeleteMeeting(meeting) {
@@ -57,6 +68,8 @@ export default function MeetingsPage({username, token}) {
         if (response.ok) {
             const nextMeetings = meetings.filter(m => m !== meeting);
             setMeetings(nextMeetings);
+        } else {
+            showError('Failed to delete meeting');
         }
     }
 
@@ -68,6 +81,8 @@ export default function MeetingsPage({username, token}) {
         });
         if (response.ok) {
             await fetchMeetings();
+        }  else {
+            showError('Failed to enroll');
         }
     }
 
@@ -78,12 +93,15 @@ export default function MeetingsPage({username, token}) {
         });
         if (response.ok) {
             await fetchMeetings();
+        }  else {
+            showError('Failed to unenroll');
         }
     }
 
 
     return (
         <div>
+            {error && <p style={{color: 'red'}}>{error}</p>}
             <h2>Zajęcia ({meetings.length})</h2>
             {
                 addingNewMeeting
