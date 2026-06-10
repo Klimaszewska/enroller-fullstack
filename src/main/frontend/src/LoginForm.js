@@ -14,7 +14,8 @@ export default function LoginForm({onLogin, buttonLabel}) {
         });
 
         if (response.ok) {
-            onLogin(login);
+            let token = await getToken();
+            onLogin({login, token});
         } else if (response.status === 409) {
             setError("Login already taken");
         } else {
@@ -30,9 +31,22 @@ export default function LoginForm({onLogin, buttonLabel}) {
         });
 
         if (response.ok || response.status === 409) {
-            onLogin(login);
+            let token = await getToken();
+            onLogin({login, token});
         } else {
             setError("Something went wrong");
+        }
+    }
+
+    async function getToken() {
+        const response = await fetch('/tokens', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"login": login, "password": password})
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.token;
         }
     }
 
@@ -42,7 +56,9 @@ export default function LoginForm({onLogin, buttonLabel}) {
         <label>Password:</label>
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
         <span style={{color: 'red'}}>{error}</span>
-        <button className="login-form-button" type="button" onClick={() => handleRegister()}>{buttonLabel || 'Register'}</button>
-        <button className="login-form-button" type="button" onClick={() => handleLogin()}>{buttonLabel || 'Log in'}</button>
+        <button className="login-form-button" type="button"
+                onClick={() => handleRegister()}>{buttonLabel || 'Register'}</button>
+        <button className="login-form-button" type="button"
+                onClick={() => handleLogin()}>{buttonLabel || 'Log in'}</button>
     </div>;
 }

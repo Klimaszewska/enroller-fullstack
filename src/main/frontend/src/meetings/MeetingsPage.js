@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import NewMeetingForm from "./NewMeetingForm";
 import MeetingsList from "./MeetingsList";
 
-export default function MeetingsPage({username}) {
+export default function MeetingsPage({username, token}) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
     const [currentUser, setCurrentUser] = useState(false);
@@ -13,7 +13,8 @@ export default function MeetingsPage({username}) {
 
     useEffect(() => {
         const fetchCurrentUser = async () => {
-            const response = await fetch(`/api/participants?key=${username}`);
+            const response = await fetch(`/api/participants?key=${username}`,
+                {headers: {'Authorization': `Bearer ${token}`}});
             if (response.ok) {
                 const currentUser = await response.json();
                 setCurrentUser(currentUser);
@@ -25,7 +26,8 @@ export default function MeetingsPage({username}) {
     }, []);
 
     async function fetchMeetings() {
-        const response = await fetch(`/api/meetings`);
+        const response = await fetch(`/api/meetings`,
+            {headers: {'Authorization': `Bearer ${token}`}});
         if (response.ok) {
             const meetings = await response.json();
             setMeetings(meetings);
@@ -35,7 +37,7 @@ export default function MeetingsPage({username}) {
     async function handleNewMeeting(meeting) {
         const response = await fetch('/api/meetings', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
             body: JSON.stringify(meeting)
         });
 
@@ -50,7 +52,7 @@ export default function MeetingsPage({username}) {
     async function handleDeleteMeeting(meeting) {
         const response = await fetch(`/api/meetings/${meeting.id}`, {
             method: 'DELETE',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
         });
         if (response.ok) {
             const nextMeetings = meetings.filter(m => m !== meeting);
@@ -61,7 +63,7 @@ export default function MeetingsPage({username}) {
     async function handleEnrollParticipant(id) {
         const response = await fetch(`/api/meetings/${id}/participants`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
             body: JSON.stringify({"login": username})
         });
         if (response.ok) {
@@ -72,7 +74,7 @@ export default function MeetingsPage({username}) {
     async function handleUnenrollParticipant(id) {
         const response = await fetch(`/api/meetings/${id}/participants/${username}`, {
             method: 'DELETE',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
         });
         if (response.ok) {
             await fetchMeetings();

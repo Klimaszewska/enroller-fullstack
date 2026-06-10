@@ -6,10 +6,12 @@ import UserPanel from "./UserPanel";
 
 function App() {
     const [loggedIn, setLoggedIn] = useState('');
+    const [token, setToken] = useState('');
 
-    function login(email) {
-        if (email) {
-            setLoggedIn(email);
+    function login({login, token}) {
+        if (login) {
+            setLoggedIn(login);
+            setToken(token);
         }
     }
 
@@ -20,7 +22,7 @@ function App() {
     return (
         <div>
             <h1>System do zapisów na zajęcia</h1>
-            {loggedIn ? <UserPanel username={loggedIn} onLogout={logout}/> : <LoginForm onLogin={login}/>}
+            {loggedIn ? <UserPanel username={loggedIn} token={token} onLogout={logout}/> : <LoginForm onLogin={login}/>}
         </div>
     );
 }
