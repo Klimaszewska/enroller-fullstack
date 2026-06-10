@@ -5,18 +5,22 @@ import LoginForm from "./LoginForm";
 import UserPanel from "./UserPanel";
 
 function App() {
-    const [loggedIn, setLoggedIn] = useState('');
-    const [token, setToken] = useState('');
+    const [loggedIn, setLoggedIn] = useState(localStorage.getItem('login') || '');
+    const [token, setToken] = useState(localStorage.getItem('token') || '');
 
     function login({login, token}) {
         if (login) {
             setLoggedIn(login);
             setToken(token);
+            localStorage.setItem('login', login);
+            localStorage.setItem('token', token);
         }
     }
 
     function logout() {
         setLoggedIn('');
+        localStorage.removeItem('login');
+        localStorage.removeItem('token');
     }
 
     return (
